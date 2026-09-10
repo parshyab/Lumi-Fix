@@ -1,0 +1,12 @@
+node_modules/
+.env
+.env.*
+!.env.example
+.DS_Store
+.npmrc
+*.log
+
+# Local Figma/editor state
+.figma/
+.vscode/
+.idea/

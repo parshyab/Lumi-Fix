@@ -1,0 +1,9 @@
+{
+  "name": "LUMI Lens — Design Check",
+  "main": "dist/code.js",
+  "ui": "dist/ui.html",
+  "api": "1.0.0",
+  "editorType": ["figma"],
+  "documentAccess": "dynamic-page",
+  "permissions": ["teamlibrary"]
+}
