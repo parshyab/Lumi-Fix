@@ -10,6 +10,7 @@ export default defineConfig({
   build: {
     outDir: `${projectRoot}dist`,
     emptyOutDir: true,
+    assetsInlineLimit: 100_000,
     rollupOptions: {
       input: { ui: `${projectRoot}src/ui/index.html` },
       output: {

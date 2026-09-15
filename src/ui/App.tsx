@@ -3,6 +3,7 @@ import { sendToPlugin } from "../shared/messages";
 import type { PluginMessage } from "../shared/messages";
 import type { Category, Finding, InitialState, LibraryStatus, ScanResult, Settings, TargetSummary, TextStyleRecord } from "../shared/types";
 import { DEFAULT_SETTINGS } from "../shared/types";
+import logoUrl from "./assets/lumi-starburst-icon.png";
 
 const categories: Array<{ id: Category; label: string; icon: string }> = [
   { id: "colors", label: "Colors", icon: "●" },
@@ -17,17 +18,16 @@ function StatusIcon({ status }: { status: Finding["status"] }): JSX.Element {
   return <span className={`status-icon status-${status}`} aria-hidden>{status === "match" ? "✓" : status === "manual-review" ? "!" : status === "unsupported" ? "–" : status === "stale" ? "↻" : "·"}</span>;
 }
 
-function Header({ onSettings, onClose }: { onSettings: () => void; onClose: () => void }): JSX.Element {
+function Header(): JSX.Element {
   return <header className="header">
-    <div className="brand-mark"><span>l</span></div>
+    <img className="brand-logo" src={logoUrl} alt="" aria-hidden="true" />
     <div className="brand-copy"><strong>LUMI Lens</strong><span>Design system quality check</span></div>
-    <div className="header-actions"><button className="icon-button" onClick={onSettings} aria-label="Settings">⚙</button><button className="icon-button" onClick={onClose} aria-label="Close">×</button></div>
   </header>;
 }
 
-function TargetSelector({ target, onTarget, onReload, onCheck }: { target: TargetSummary; onTarget: (target: "selection" | "page") => void; onReload: () => void; onCheck: () => void }): JSX.Element {
+function TargetSelector({ target, onTarget, onReload, onSettings, onCheck }: { target: TargetSummary; onTarget: (target: "selection" | "page") => void; onReload: () => void; onSettings: () => void; onCheck: () => void }): JSX.Element {
   return <section className="target-section">
-    <div className="section-eyebrow">AUDIT TARGET <button className="reload-button" onClick={onReload}>↻ Reload</button></div>
+    <div className="section-eyebrow"><span>AUDIT TARGET</span><span className="section-tools"><button className="text-button" onClick={onSettings}>Settings</button><button className="reload-button" onClick={onReload}>↻ Reload</button></span></div>
     <div className="segmented"><button className={target.target === "selection" ? "active" : ""} onClick={() => onTarget("selection")}>Current selection</button><button className={target.target === "page" ? "active" : ""} onClick={() => onTarget("page")}>Current page</button></div>
     <div className="target-meta"><div><span className="meta-label">Page</span><strong>{target.pageName}</strong></div><div className="layer-count"><strong>{target.layerCount.toLocaleString()}</strong><span>layers to scan</span></div></div>
     {target.message && <div className="notice subtle">{target.message}</div>}
@@ -140,8 +140,8 @@ export function App(): JSX.Element {
   const visibleCount = visibleFindings.length;
 
   if (settingsOpen) return <SettingsPanel settings={settings} libraryStatus={initial?.libraryStatus} textStyles={initial?.textStyles} onUpdate={updateSettings} onClose={() => setSettingsOpen(false)} />;
-  return <main className="app-shell"><Header onSettings={() => setSettingsOpen(true)} onClose={() => send({ type: "CLOSE" })} />
-    <TargetSelector target={target} onTarget={selectTarget} onReload={() => send({ type: "RELOAD" })} onCheck={check} />
+  return <main className="app-shell"><Header />
+    <TargetSelector target={target} onTarget={selectTarget} onReload={() => send({ type: "RELOAD" })} onSettings={() => setSettingsOpen(true)} onCheck={check} />
     <LibraryBanner status={result?.libraryStatus ?? initial?.libraryStatus} />
     {busy && <div className="progress-line"><span style={{ width: `${progress}%` }} /></div>}
     {error && <div className="error-banner"><strong>Check paused</strong><span>{error}</span><button onClick={check}>Try again</button></div>}
